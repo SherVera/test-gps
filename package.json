@@ -1,0 +1,19 @@
+{
+  "name": "gps-test",
+  "version": "1.0.0",
+  "description": "test gps",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sherman",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "gps": "^0.6.0",
+    "gps-tracker-server": "0.0.4",
+    "gpstracker": "0.0.4",
+    "nmea-simple": "^3.2.0"
+  }
+}
