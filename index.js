@@ -55,7 +55,6 @@ async function start() {
     });
 
     await server.run();
-    console.log("server start ", server);
   } catch (err) {
     console.log(err);
     process.exit(1);
