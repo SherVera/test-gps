@@ -4,6 +4,32 @@ const app = require("express")();
 const bodyParser = require("body-parser");
 const T303Adapter = require('./controllers/tracker303/Adapter303');
 
+const mongoose = require("mongoose");
+var Schema = mongoose.Schema;
+
+var schemaLog = new Schema(
+  {
+    description: String,
+    event: Object,
+  },
+  {
+    collection: "logs",
+    timestamps: true,
+    versionKey: false,
+  }
+);
+
+var LogModel = mongoose.model("LogModel", schemaLog);
+mongoose.connect("mongodb://localhost:27017/logsGPS", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+mongoose.connection.on("error", (err) => {
+  console.log("err", err);
+});
+mongoose.connection.on("connected", (err, res) => {
+  console.log("connected");
+});
 /* var server = gpstracker.create().listen(5050, function () {
   console.log(
     "listening your gps trackers on port",
@@ -38,25 +64,43 @@ async function start() {
       device.maxInterval = 120 * 1000 //ten minutes
       device.alarmOffline = true;
       device.startTimerStatusOnline();
+      await LogModel.create({
+        description: device.UID,
+        event: 'device start'
+      })
 
-      console.log('device start', device.UID);
     })
 
     server.on('tracker', (msg, device) => {
-      console.log(msg, device.UID);
+      await LogModel.create({
+        description: device.UID,
+        event: msg
+      })
+
     })
 
     server.on('alarms', (info, device) => {
-      console.log(info, device.UID);
+      await LogModel.create({
+        description: device.UID,
+        event: info
+      })
     });
 
     server.on('disconnections', device => {
+      await LogModel.create({
+        description: device.UID,
+        event: 'disconnect'
+      })
       console.log(device.UID);
     });
 
     await server.run();
   } catch (err) {
     console.log(err);
+    await LogModel.create({
+      description: err,
+      event: 'error'
+    })
     process.exit(1);
   }
 
